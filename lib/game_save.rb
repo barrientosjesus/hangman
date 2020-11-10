@@ -1,12 +1,13 @@
 # frozen_string_literal: true
+
 require 'yaml'
 
 module GameSave
   def save_game(game)
-    puts "Enter name of your save. (This will be what you type to load it)"
+    puts 'Enter name of your save. (This will be what you type to load it)'
     saved_name = gets.chomp.downcase
     while File.exist?("./saved_games/#{saved_name}.yml")
-      puts "Sorry, that saved name already exists! Save with a different name please"
+      puts 'Sorry, that saved name already exists! Save with a different name please'
       saved_name = gets.chomp.downcase
     end
     data = YAML.dump(game)
@@ -17,16 +18,16 @@ module GameSave
 
   def load_game
     unless Dir.exist?('saved_games')
-      puts "No saves found, sorry!"
-      puts " "
+      puts 'No saves found, sorry!'
+      puts ' '
       sleep(3)
       Hangman.new.start
     end
-    puts "Input your save name:"
+    puts 'Input your save name:'
     load_save = gets.chomp
     unless File.exist?("./saved_games/#{load_save}.yml")
       puts "Sorry your save isn't there"
-      puts " "
+      puts ' '
       sleep(3)
       Hangman.new.start
     end

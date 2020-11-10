@@ -1,13 +1,12 @@
-require_relative './game_save.rb'
-require_relative './hangedman.rb'
+require_relative './game_save'
+require_relative './hangedman'
 require 'yaml'
-
 
 class Hangman
   include HangedMan
   include GameSave
 
-  attr_accessor :guessed_correct, :guessed_incorrect, 
+  attr_accessor :guessed_correct, :guessed_incorrect,
                 :game_word, :guesses_available
 
   def initialize
@@ -22,7 +21,7 @@ class Hangman
       if @guessed_correct.include?(i)
         i
       else
-        "_"
+        '_'
       end
     end
     case @guesses_available
@@ -41,32 +40,33 @@ class Hangman
     when 0
       failures6
     end
-    puts "#{guessed.join(' ')}"
-    puts "#{@guessed_incorrect.empty? ? 'No incorrect gueeses yet' : "Incorrect: " + @guessed_incorrect.join(',')}"
+    puts guessed.join(' ').to_s
+    puts (@guessed_incorrect.empty? ? 'No incorrect gueeses yet' : 'Incorrect: ' + @guessed_incorrect.join(',')).to_s
   end
 
   def create_word
-    dictionary = File.readlines("../5desk.txt")
-    word = ""
+    dictionary = File.readlines('../5desk.txt')
+    word = ''
     word = dictionary[rand(dictionary.length)].chomp.downcase until word.length > 4 && word.length < 13
     word
   end
 
   def start
     puts '~~~~~~~~~~~~~~~~~~'
-    puts "New Game - Type 1:"
-    puts "Load Game- Type 2:"
+    puts 'New Game - Type 1:'
+    puts 'Load Game- Type 2:'
     puts '~~~~~~~~~~~~~~~~~~'
     start_type = gets.chomp
-    return load_game if start_type == "2"
-    if start_type == "1"
+    return load_game if start_type == '2'
+
+    if start_type == '1'
       game_logic
     elsif start_type.to_i < 1 || start_type.to_i > 2
-      puts "1 or 2, nothing else please! >=["
+      puts '1 or 2, nothing else please! >=['
       sleep(1)
       Hangman.new.start
     else
-      puts "!!Invalid input restarting game!!"
+      puts '!!Invalid input restarting game!!'
       Hangman.new.start
     end
   end
@@ -75,14 +75,12 @@ class Hangman
     gameover = false
     until gameover
       display_man
-      get_guess
-      if @guessed_correct.sort == @game_word.split('').sort
-        gameover = true
-      elsif @guesses_available == 0
-        gameover = true
-      else
-        gameover = false
-      end
+      retrieve_guess
+      gameover = if @guessed_correct.sort == @game_word.split('').sort
+                   true
+                 else
+                   @guesses_available += 1
+                 end
     end
     game_over
     sleep(2)
@@ -94,39 +92,40 @@ class Hangman
     if @guessed_correct.sort == @game_word.split('').sort
       puts '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
       puts "!! #{@game_word} !!"
-      puts "Yay! You got the word correct!"
+      puts 'Yay! You got the word correct!'
       puts '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
       puts ' '
     else
       sleep(1)
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
       puts "You've ran out of attempts :("
-      puts "Dude is dead"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts 'Dude is dead'
+      puts '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
       sleep(1)
       puts ''
       keep_playing
     end
   end
 
-  def get_guess
+  def retrieve_guess
     puts "To save progress, enter 'save', otherwise begin guessing!"
     guess = gets.chomp.downcase
     while guess.to_s.length > 1
       return save_game(self) if guess == 'save'
+
       if @guessed_incorrect.include?(guess) || @guessed_correct.include?(guess)
-      puts "Seems to be something wrong with your input, please try again"
-      guess = gets.chomp.downcase
+        puts 'Seems to be something wrong with your input, please try again'
+        guess = gets.chomp.downcase
       elsif guess.to_s.length > 1
-      puts "Seems to be something wrong with your input, please try again"
-      guess = gets.chomp.downcase
+        puts 'Seems to be something wrong with your input, please try again'
+        guess = gets.chomp.downcase
       else
         guess
       end
     end
-    if @game_word.include?(guess) 
+    if @game_word.include?(guess)
       @guessed_correct << guess
-      puts "You got it pal!"
+      puts 'You got it pal!'
     else
       @guessed_incorrect << guess
       puts "Sorry, bud that's incorrect"
