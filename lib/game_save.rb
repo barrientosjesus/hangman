@@ -38,8 +38,10 @@ module GameSave
     puts loading_game[3]
     puts '--------------------'
     puts "Loading #{load_save}"
-    puts ' - - - - - - - - - '
-    sleep(1)
+    puts '--------------------'
+    sleep(2)
+    puts ' '
+    puts '------------------'
     puts 'Deleting Save File'
     puts '------------------'
     File.delete("./saved_games/#{load_save}.yml")
