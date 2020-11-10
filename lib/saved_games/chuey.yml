@@ -1,0 +1,10 @@
+--- !ruby/object:Hangman
+game_word: surmounter
+guessed_incorrect:
+- a
+- i
+guessed_correct:
+- e
+- o
+- u
+guesses_available: 4
