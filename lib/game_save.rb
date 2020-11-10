@@ -24,8 +24,10 @@ module GameSave
       sleep(3)
       Hangman.new.start
     end
+
     puts 'Input your save name:'
     load_save = gets.chomp
+    
     unless File.exist?("./saved_games/#{load_save}.yml")
       puts "Sorry your save isn't there"
       puts ' '

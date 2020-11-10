@@ -19,12 +19,15 @@ class Hangman
 
   def display_man
     guessed = @game_word.split('').map do |i|
+
       if @guessed_correct.include?(i)
         i
       else
         '_'
       end
+
     end
+
     case @guesses_available
     when 6
       failures0
@@ -41,6 +44,7 @@ class Hangman
     when 0
       failures6
     end
+
     puts guessed.join(' ').to_s
     puts (@guessed_incorrect.empty? ? 'No incorrect guesses yet' : 'Incorrect: ' + @guessed_incorrect.join(',')).to_s
   end
@@ -57,6 +61,7 @@ class Hangman
     puts 'New Game - Type 1:'
     puts 'Load Game- Type 2:'
     puts '~~~~~~~~~~~~~~~~~~'
+    
     start_type = gets.chomp
     return load_game if start_type == '2'
 
@@ -81,9 +86,12 @@ class Hangman
     until gameover
       @varhash = {"game_word" => @game_word, "guessed_incorrect" => @guessed_incorrect,
         "guessed_correct" => @guessed_correct, "guesses_available" => @guesses_available}
+      
       puts @varhash
+
       display_man
       retrieve_guess
+
       if @guessed_correct.sort == @game_word.split('').sort
         gameover = true
       elsif @guesses_available == 0
@@ -92,9 +100,12 @@ class Hangman
         gameover = false
       end
     end
+
     game_over
+
     sleep(2)
     puts ' '
+
     keep_playing
   end
 
@@ -118,19 +129,23 @@ class Hangman
   end
 
   def retrieve_guess
+
     puts "To save progress, enter 'save', otherwise begin guessing!"
     guess = gets.chomp.downcase
     return save_game(@varhash) if guess == 'save'
+
     while guess.to_s.length > 1
         puts 'Seems to be something wrong with your input, please try again'
         guess = gets.chomp.downcase
         return save_game(@varhash) if guess == 'save'
     end
+
     while @guessed_incorrect.include?(guess) || @guessed_correct.include?(guess)
       puts 'Seems to be something wrong with your input, please try again'
       guess = gets.chomp.downcase
       return save_game(@varhash) if guess == 'save'
     end
+
     if @game_word.include?(guess)
       @game_word.count(guess).times do |e|
         @guessed_correct << guess
