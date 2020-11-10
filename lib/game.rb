@@ -8,15 +8,13 @@ class Hangman
   include GameSave
 
   attr_accessor :guessed_correct, :guessed_incorrect,
-                :game_word, :guesses_available, :vararray
+                :game_word, :guesses_available, :varhash
 
   def initialize
     @game_word = create_word
     @guessed_incorrect = []
     @guessed_correct = []
     @guesses_available = 6
-    @vararray = [{"game_word" => @game_word}, {"guessed_incorrect" => @guessed_incorrect},
-                  {"guessed_correct" => @guessed_correct}, {"guesses_available" => @guesses_available}]
   end
 
   def display_man
@@ -44,7 +42,7 @@ class Hangman
       failures6
     end
     puts guessed.join(' ').to_s
-    puts (@guessed_incorrect.empty? ? 'No incorrect gueeses yet' : 'Incorrect: ' + @guessed_incorrect.join(',')).to_s
+    puts (@guessed_incorrect.empty? ? 'No incorrect guesses yet' : 'Incorrect: ' + @guessed_incorrect.join(',')).to_s
   end
 
   def create_word
@@ -63,7 +61,7 @@ class Hangman
     return load_game if start_type == '2'
 
     if start_type == '1'
-      game_logic
+      game_logic(@game_word, @guessed_incorrect, @guessed_correct, @guesses_available)
     elsif start_type.to_i < 1 || start_type.to_i > 2
       puts '1 or 2, nothing else please! >=['
       sleep(1)
@@ -74,15 +72,24 @@ class Hangman
     end
   end
 
-  def game_logic
+  def game_logic(word,incorrect,correct,guesses)
+    @game_word = word
+    @guessed_incorrect = incorrect
+    @guessed_correct = correct
+    @guesses_available = guesses
     gameover = false
     until gameover
+      @varhash = {"game_word" => @game_word, "guessed_incorrect" => @guessed_incorrect,
+        "guessed_correct" => @guessed_correct, "guesses_available" => @guesses_available}
+      puts @varhash
       display_man
       retrieve_guess
       if @guessed_correct.sort == @game_word.split('').sort
         gameover = true
+      elsif @guesses_available == 0
+        gameover = true
       else
-        @guesses_available -= 1
+        gameover = false
       end
     end
     game_over
@@ -113,22 +120,23 @@ class Hangman
   def retrieve_guess
     puts "To save progress, enter 'save', otherwise begin guessing!"
     guess = gets.chomp.downcase
+    return save_game(@varhash) if guess == 'save'
     while guess.to_s.length > 1
-      return save_game(self) if guess == 'save'
-
-      if @guessed_incorrect.include?(guess) || @guessed_correct.include?(guess)
         puts 'Seems to be something wrong with your input, please try again'
         guess = gets.chomp.downcase
-      elsif guess.to_s.length > 1
-        puts 'Seems to be something wrong with your input, please try again'
-        guess = gets.chomp.downcase
-      else
-        guess
-      end
+        return save_game(@varhash) if guess == 'save'
+    end
+    while @guessed_incorrect.include?(guess) || @guessed_correct.include?(guess)
+      puts 'Seems to be something wrong with your input, please try again'
+      guess = gets.chomp.downcase
+      return save_game(@varhash) if guess == 'save'
     end
     if @game_word.include?(guess)
-      @guessed_correct << guess
+      @game_word.count(guess).times do |e|
+        @guessed_correct << guess
+      end
       puts 'You got it pal!'
+      puts ' '
     else
       @guessed_incorrect << guess
       puts "Sorry, bud that's incorrect"
@@ -140,8 +148,8 @@ class Hangman
     puts '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
     puts "If you'd like to play again, please type 1"
     puts '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-    play_again = gets.chomp
-    if play_again.to_i == 1
+    play_again = gets.chomp.to_i
+    if play_again == 1
       Hangman.new.start
     else
       abort("You didn't type 1, so I'll be shutting down now :(")

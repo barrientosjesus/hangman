@@ -11,7 +11,7 @@ module GameSave
       puts 'Sorry, that saved name already exists! Save with a different name please'
       saved_name = gets.chomp.downcase
     end
-    data_yml = YAML.dump(game)
+    data_yml = JSON.dump(game)
     Dir.mkdir('saved_games') unless Dir.exist?('saved_games')
     File.open("./saved_games/#{saved_name}.yml", 'w') { |f| f.write data_yml }
     abort("Your game has been saved! Load with: #{saved_name}")
@@ -33,22 +33,28 @@ module GameSave
       Hangman.new.start
     end
     loading_game = load_saved_game(load_save)
-    puts loading_game
+    puts loading_game[3]
+    puts '--------------------'
     puts "Loading #{load_save}"
+    puts ' - - - - - - - - - '
     sleep(1)
-    puts '~~~'
+    puts 'Deleting Save File'
+    puts '------------------'
+    File.delete("./saved_games/#{load_save}.yml")
     sleep(1)
-    puts '~~~'
-    loading_game
+    puts 'Game starting...'
+    sleep(1)
+    puts ' '
+    puts ' '
+    game_logic(loading_game[0],loading_game[1],loading_game[2],loading_game[3])
   end
 
   def load_saved_game(saveload)
     data = YAML.load(File.read("./saved_games/#{saveload}.yml"))
-    puts data
-    @game_word = data[0]
-    @guessed_incorrect = data[1]
-    @guessed_correct = data[2]
-    @guesses_available = data[3]
-    puts @game_word, @guesses_available, @guessed_correct, @guessed_incorrect
+    @game_word = data['game_word']
+    @guessed_incorrect = data['guessed_incorrect']
+    @guessed_correct = data['guessed_correct']
+    @guesses_available = data['guesses_available']
+    [@game_word, @guessed_incorrect, @guessed_correct, @guesses_available]
   end
 end
