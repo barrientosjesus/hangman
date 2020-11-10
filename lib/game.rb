@@ -50,7 +50,7 @@ class Hangman
   end
 
   def create_word
-    dictionary = File.readlines('../5desk.txt')
+    dictionary = File.readlines('5desk.txt')
     word = ''
     word = dictionary[rand(dictionary.length)].chomp.downcase until word.length > 4 && word.length < 13
     word
@@ -86,8 +86,6 @@ class Hangman
     until gameover
       @varhash = {"game_word" => @game_word, "guessed_incorrect" => @guessed_incorrect,
         "guessed_correct" => @guessed_correct, "guesses_available" => @guesses_available}
-      
-      puts @varhash
 
       display_man
       retrieve_guess
