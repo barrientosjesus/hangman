@@ -1,19 +1,22 @@
 require_relative './game_save'
 require_relative './hangedman'
 require 'yaml'
+require 'json'
 
 class Hangman
   include HangedMan
   include GameSave
 
   attr_accessor :guessed_correct, :guessed_incorrect,
-                :game_word, :guesses_available
+                :game_word, :guesses_available, :vararray
 
   def initialize
     @game_word = create_word
     @guessed_incorrect = []
     @guessed_correct = []
     @guesses_available = 6
+    @vararray = [{"game_word" => @game_word}, {"guessed_incorrect" => @guessed_incorrect},
+                  {"guessed_correct" => @guessed_correct}, {"guesses_available" => @guesses_available}]
   end
 
   def display_man
@@ -76,11 +79,11 @@ class Hangman
     until gameover
       display_man
       retrieve_guess
-      gameover = if @guessed_correct.sort == @game_word.split('').sort
-                   true
-                 else
-                   @guesses_available += 1
-                 end
+      if @guessed_correct.sort == @game_word.split('').sort
+        gameover = true
+      else
+        @guesses_available -= 1
+      end
     end
     game_over
     sleep(2)
@@ -134,7 +137,9 @@ class Hangman
   end
 
   def keep_playing
+    puts '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
     puts "If you'd like to play again, please type 1"
+    puts '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
     play_again = gets.chomp
     if play_again.to_i == 1
       Hangman.new.start

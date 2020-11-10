@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'yaml'
+require 'json'
 
 module GameSave
   def save_game(game)
@@ -10,9 +11,9 @@ module GameSave
       puts 'Sorry, that saved name already exists! Save with a different name please'
       saved_name = gets.chomp.downcase
     end
-    data = YAML.dump(game)
+    data_yml = YAML.dump(game)
     Dir.mkdir('saved_games') unless Dir.exist?('saved_games')
-    File.open("./saved_games/#{saved_name}.yml", 'w') { |f| f.write data }
+    File.open("./saved_games/#{saved_name}.yml", 'w') { |f| f.write data_yml }
     abort("Your game has been saved! Load with: #{saved_name}")
   end
 
@@ -38,18 +39,16 @@ module GameSave
     puts '~~~'
     sleep(1)
     puts '~~~'
+    loading_game
   end
 
   def load_saved_game(saveload)
     data = YAML.load(File.read("./saved_games/#{saveload}.yml"))
     puts data
-    @game_word = data[:game_word]
-    @guessed_incorrect = data['guessed_incorrect']
-    @guessed_correct = data['guessed_correct']
-    @guesses_available = data['guesses_available']
-    # @game_word = data['game_word']
-    # @guessed_incorrect = data['guessed_incorrect']
-    # @guessed_correct = data['guessed_correct']
-    # @guesses_available = data['guesses_available']
+    @game_word = data[0]
+    @guessed_incorrect = data[1]
+    @guessed_correct = data[2]
+    @guesses_available = data[3]
+    puts @game_word, @guesses_available, @guessed_correct, @guessed_incorrect
   end
 end
