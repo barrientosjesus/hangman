@@ -1,6 +1,4 @@
-Press run
-
-https://repl.it/join/deaccelh-jabarri1
+[![Run on Repl.it](https://repl.it/badge/github/@jabarri1/hangman)](https://repl.it/@jabarri1/hangman)
 
 To-Do List:
 
