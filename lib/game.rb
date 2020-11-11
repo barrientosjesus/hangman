@@ -92,7 +92,7 @@ class Hangman
 
       if @guessed_correct.sort == @game_word.split('').sort
         gameover = true
-      elsif @guesses_available == 0
+      elsif @guesses_available < 0
         gameover = true
       else
         gameover = false
@@ -116,9 +116,10 @@ class Hangman
       puts ' '
     else
       sleep(1)
+      puts ' '
       puts '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
       puts "You've ran out of attempts :("
-      puts 'Dude is dead'
+      puts "Dude is dead - Word: #{@game_word}"
       puts '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
       sleep(1)
       puts ''
@@ -148,11 +149,14 @@ class Hangman
       @game_word.count(guess).times do |e|
         @guessed_correct << guess
       end
-      puts 'You got it pal!'
+      puts ' '
+      puts '~~ You got it pal! ~~'
       puts ' '
     else
       @guessed_incorrect << guess
+      puts ' '
       puts "Sorry, bud that's incorrect"
+      puts ' '
       @guesses_available -= 1
     end
   end
@@ -165,6 +169,7 @@ class Hangman
     if play_again == 1
       Hangman.new.start
     else
+      puts ' '
       abort("You didn't type 1, so I'll be shutting down now :(")
     end
   end
